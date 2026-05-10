@@ -22,33 +22,48 @@ export const createFeatureFlag = async (req, res) => {
 };
 
 export const getFeatureFlags = async (req, res) => {
-    const flags = await FeatureFlag.find({
-        organization: req.user.organization,
-    });
+    try {
+        const flags = await FeatureFlag.find({
+            organization: req.user.organization,
+        });
 
-    res.json(flags);
+        res.json(flags);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 export const updateFeatureFlag = async (req, res) => {
-    const flag = await FeatureFlag.findById(req.params.id);
+    try {
+        const flag = await FeatureFlag.findById(req.params.id);
 
-    if (!flag) {
-        return res.status(404).json({
-            message: "Flag not found",
-        });
+        if (!flag) {
+            return res.status(404).json({
+                message: "Flag not found",
+            });
+        }
+
+        flag.enabled = req.body.enabled;
+
+        await flag.save();
+
+        res.json(flag);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
     }
-
-    flag.enabled = req.body.enabled;
-
-    await flag.save();
-
-    res.json(flag);
 };
 
 export const deleteFeatureFlag = async (req, res) => {
-    await FeatureFlag.findByIdAndDelete(req.params.id);
+    try {
+        await FeatureFlag.findByIdAndDelete(req.params.id);
 
-    res.json({
-        message: "Deleted successfully",
-    });
+        res.json({
+            message: "Deleted successfully",
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
