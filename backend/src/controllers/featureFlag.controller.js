@@ -2,12 +2,14 @@ import FeatureFlag from "../models/FeatureFlag.js";
 
 export const createFeatureFlag = async (req, res) => {
     try {
-        const { featureKey, enabled } = req.body;
+        const { name, description, enabled } = req.body;
 
         const flag = await FeatureFlag.create({
-            featureKey,
+            name,
+            description,
             enabled,
             organization: req.user.organization,
+            createdBy: req.user.id,
         });
 
         return res.status(201).json({
@@ -27,7 +29,7 @@ export const getFeatureFlags = async (req, res) => {
             organization: req.user.organization,
         });
 
-        res.json(flags);
+        res.status(200).json(flags);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
@@ -48,7 +50,7 @@ export const updateFeatureFlag = async (req, res) => {
 
         await flag.save();
 
-        res.json(flag);
+        res.status(200).json(flag);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
@@ -57,9 +59,15 @@ export const updateFeatureFlag = async (req, res) => {
 
 export const deleteFeatureFlag = async (req, res) => {
     try {
-        await FeatureFlag.findByIdAndDelete(req.params.id);
+        const deletedFlag = await FeatureFlag.findByIdAndDelete(req.params.id);
 
-        res.json({
+        if (!deletedFlag) {
+            return res.status(404).json({
+                message: "Feature not found",
+            });
+        }
+
+        res.status(200).json({
             message: "Deleted successfully",
         });
     } catch (error) {

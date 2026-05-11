@@ -5,17 +5,17 @@ export const checkFeature = async (req, res) => {
         const { featureKey, organizationId } = req.body;
 
         const feature = await FeatureFlag.findOne({
-            featureKey,
+            name: featureKey,
             organization: organizationId,
         });
 
         if (!feature) {
-            return res.json({
-                enabled: false,
+            return res.status(404).json({
+                message: "Feature not found",
             });
         }
 
-        res.json({
+        res.status(200).json({
             enabled: feature.enabled,
         });
     } catch (error) {

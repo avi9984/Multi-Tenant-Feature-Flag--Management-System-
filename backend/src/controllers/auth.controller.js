@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Organization from "../models/Organization.js";
 import bcrypt from "bcryptjs";
+import generateToken from "../utils/generateToken.js";
 
 export const signup = async (req, res) => {
     try {
@@ -34,7 +35,7 @@ export const signup = async (req, res) => {
 
         res.status(201).json({
             message: "Signup successful",
-            user,
+            // user,
         });
     } catch (error) {
         console.error(error);
@@ -64,7 +65,7 @@ export const login = async (req, res) => {
 
         const token = generateToken(user);
 
-        res.json({
+        res.status(200).json({
             message: "Login successful",
             token,
         });

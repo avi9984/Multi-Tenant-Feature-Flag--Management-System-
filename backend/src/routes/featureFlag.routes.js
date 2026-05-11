@@ -8,12 +8,12 @@ import { createFeatureFlag, getFeatureFlags, updateFeatureFlag, deleteFeatureFla
 
 const router = express.Router();
 
-router.post("/", authMiddleware, roleMiddleware("ORG_ADMIN"), createFeatureFlag);
+router.post("/create", authMiddleware, roleMiddleware("ORG_ADMIN"), createFeatureFlag);
 
 router.get("/", authMiddleware, roleMiddleware("ORG_ADMIN"), getFeatureFlags);
 
-router.put("/:id", authMiddleware, roleMiddleware("ORG_ADMIN"), updateFeatureFlag);
+router.put("/update/:id", authMiddleware, roleMiddleware("ORG_ADMIN"), updateFeatureFlag);
 
-router.delete("/:id", authMiddleware, roleMiddleware("ORG_ADMIN"), deleteFeatureFlag);
+router.delete("/delete/:id", authMiddleware, roleMiddleware("ORG_ADMIN"), deleteFeatureFlag);
 
 export default router;
